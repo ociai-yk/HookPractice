@@ -1,0 +1,29 @@
+#!/bin/sh
+# get prev/current branch name
+CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+PREV_BRANCH=`git rev-parse --abbrev-ref @{-1}`
+#COMMIT_MESSAGE=`git log --pretty=format:"%an - %ad,%cn - %cd,%s" -1`
+#ブランチ名の取得
+BRANCH=`git rev-parse --abbrev-ref $1`
+#こっみったーの取得
+COMMITER_NAME=`git log --pretty=format:"%cn" -1`
+#コミットメッセージの取得
+COMMIT_MESSAGE=`git log --pretty=format:"%s" -1`
+COMMIT_LOG=`git log`
+#COIMMIT_MESSAGE=`git log --pretty=format:"%h - %an, %ar : %s"
+#個人のslack
+# slack info
+WEBHOOKURL="https://hooks.slack.com/services/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"
+CHANNEL="#general"
+BOT_NAME="bot_name"
+FACEICON=":timer_clock:"
+# send Incoming WebHooks (ref. https://hooks.slack.com/services/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)
+curl -s -S -X POST --data-urlencode "payload={\
+      \"channel\": \"${CHANNEL}\", \
+      \"username\": \"${BOT_NAME}\", \
+      \"icon_emoji\": \"${FACEICON}\", \
+      \"text\": \"${COMMIT_LOG}に${COMMITER_NAME}がコミットしました。\" \
+    }" ${WEBHOOKURL} >/dev/null
+
+#どのブランチに〜さんがpushしました。＋ログ
+#BRANCH=$(git rev-parse --symbolic --abbrev-ref $1)
